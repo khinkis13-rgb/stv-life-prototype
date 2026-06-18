@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СТВ Vibe</title>
+  <!-- Веб-шрифт Manrope (substitute TT Norms) — как в styleguide.html.
+       base.css также импортирует его через @import; здесь дублируем preconnect для скорости. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap&subset=cyrillic,cyrillic-ext,latin,latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <style>
+    /* ======================================================================
+       ЛОКАЛЬНЫЕ СТИЛИ ГЛАВНОЙ (часть эталонной оболочки — копируется экранами).
+       Только то, чего нет в base.css. Все значения — через токены.
+       ====================================================================== */
+
+    /* --- Герой-блок: приветствие + баланс на тёмном фоне бренда --- */
+    .stv-hero {
+      background: var(--color-dark-bg);
+      color: var(--color-on-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      display: grid;
+      gap: var(--space-5);
+      grid-template-columns: 1fr;
+    }
+    .stv-hero h1 { color: var(--color-on-dark); margin-bottom: var(--space-1); }
+    .stv-hero__balance-value {
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-extrabold);
+      line-height: 1;
+      color: var(--stv-green);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .stv-hero__balance-value .stv-icon { width: 32px; height: 32px; }
+    .stv-hero__unit { color: var(--color-on-dark-muted); font-size: var(--text-lg); font-weight: var(--weight-semibold); }
+    .stv-hero__gain {
+      display: inline-flex; align-items: center; gap: var(--space-1);
+      color: var(--stv-green); font-weight: var(--weight-bold); font-size: var(--text-sm);
+    }
+    .stv-hero__goal { background: var(--color-dark-surface); border-radius: var(--radius-md); padding: var(--space-4); }
+    .stv-progress--on-dark { background: rgba(255,255,255,0.10); }
+    @media (min-width: 768px) {
+      .stv-hero { grid-template-columns: 1.1fr 1fr; align-items: center; padding: var(--space-8); }
+    }
+
+    /* --- Быстрые действия: карточки-кнопки с иконкой --- */
+    .stv-actions {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .stv-action {
+      display: flex; flex-direction: column; gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      color: var(--color-text);
+      font-weight: var(--weight-bold);
+      transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+    }
+    .stv-action:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--stv-green); color: var(--color-text); }
+    .stv-action__icon {
+      display: grid; place-items: center;
+      width: 40px; height: 40px;
+      border-radius: var(--radius-sm);
+      background: rgba(77,229,100,0.16);
+    }
+    .stv-action__icon .stv-icon { width: 22px; height: 22px; color: var(--stv-green-700); }
+
+    /* --- Иконка по умолчанию (если не задан размер выше) --- */
+    .stv-icon { width: 20px; height: 20px; }
+
+    /* --- Список-таблица рейтинга / благодарностей --- */
+    .stv-rank { display: flex; flex-direction: column; }
+    .stv-rank__row {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding-block: var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .stv-rank__row:last-child { border-bottom: 0; }
+    .stv-rank__num {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: var(--color-surface-2);
+      font-weight: var(--weight-extrabold);
+      font-size: var(--text-sm);
+    }
+    .stv-rank__row.is-me { background: rgba(77,229,100,0.10); border-radius: var(--radius-sm); padding-inline: var(--space-3); }
+    .stv-rank__row.is-me .stv-rank__num { background: var(--stv-green); color: var(--color-accent-ink); }
+    .stv-rank__name { font-weight: var(--weight-semibold); }
+    .stv-rank__role { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .stv-rank__gain { margin-left: auto; color: var(--stv-green-700); font-weight: var(--weight-extrabold); white-space: nowrap; }
+
+    /* --- Лента благодарностей --- */
+    .stv-thank { display: flex; gap: var(--space-3); }
+    .stv-thank__icon {
+      flex-shrink: 0; width: 36px; height: 36px;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: rgba(229,5,129,0.10);
+    }
+    .stv-thank__icon .stv-icon { width: 20px; height: 20px; color: var(--stv-pink); }
+    .stv-thank__who { font-weight: var(--weight-bold); font-size: var(--text-sm); margin-bottom: 2px; }
+    .stv-thank__text { color: var(--color-text-muted); font-size: var(--text-sm); }
+
+    /* --- Карточка анонса / активности (лёгкая, без медиа) --- */
+    .stv-meta { color: var(--color-text-muted); font-size: var(--text-sm); display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+
+    /* --- Футер --- */
+    .stv-footer { background: var(--color-dark-bg); color: var(--color-on-dark-muted); }
+    .stv-footer__inner {
+      display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap;
+      max-width: var(--container-max); margin-inline: auto;
+      padding: var(--space-5) var(--space-4);
+      font-size: var(--text-sm);
+    }
+    .stv-footer__inner img { height: 22px; width: auto; }
+
+    /* ======================================================================
+       ЛОКАЛЬНЫЕ СТИЛИ ЭКРАНА VIBE (только то, чего нет в base.css).
+       Все значения — через токены. Идут ПОСЛЕ эталонной оболочки.
+       ====================================================================== */
+
+    /* --- Дата-бейдж в карточке анонса (день + месяц) --- */
+    .stv-datechip {
+      flex-shrink: 0;
+      display: grid; place-items: center;
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      background: rgba(77,229,100,0.16);
+      color: var(--stv-green-700);
+      line-height: 1.05;
+      text-align: center;
+    }
+    .stv-datechip__day { font-size: var(--text-xl); font-weight: var(--weight-extrabold); }
+    .stv-datechip__mon { font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* --- Аватары-плейсхолдеры участников (кружки с инициалами) --- */
+    .stv-avatars { display: flex; align-items: center; }
+    .stv-avatar {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--color-surface);
+      color: #fff;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-extrabold);
+      margin-left: calc(-1 * var(--space-3));
+      flex-shrink: 0;
+    }
+    .stv-avatar:first-child { margin-left: 0; }
+    .stv-avatar--green  { background: var(--stv-green); color: var(--color-accent-ink); }
+    .stv-avatar--blue   { background: var(--stv-blue); }
+    .stv-avatar--pink   { background: var(--stv-pink); }
+    .stv-avatar--purple { background: var(--stv-purple); }
+    .stv-avatar--more   { background: var(--color-surface-2); color: var(--color-text); border-color: var(--color-surface); }
+
+    /* --- Фотоальбом: брендовые плейсхолдер-плитки (честный демо, без фото мерча) --- */
+    .stv-album {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    .stv-photo {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      color: #fff;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    /* Брендовые градиенты из основной + доп. палитры (не доминируют над основной) */
+    .stv-photo--g1 { background: linear-gradient(135deg, var(--stv-green) 0%, var(--stv-green-700) 100%); color: var(--color-accent-ink); }
+    .stv-photo--g2 { background: linear-gradient(135deg, var(--stv-blue) 0%, var(--stv-blue-900) 100%); }
+    .stv-photo--g3 { background: linear-gradient(135deg, var(--stv-pink) 0%, var(--stv-purple-700) 100%); }
+    .stv-photo--g4 { background: linear-gradient(135deg, var(--stv-purple-500) 0%, var(--stv-dark) 100%); }
+    .stv-photo--g5 { background: linear-gradient(135deg, var(--stv-ochre-500) 0%, var(--stv-pink-700) 100%); }
+    .stv-photo--g6 { background: linear-gradient(135deg, var(--stv-green-700) 0%, var(--stv-blue-900) 100%); }
+    .stv-photo--g7 { background: linear-gradient(135deg, var(--stv-blue-700) 0%, var(--stv-purple-700) 100%); }
+    .stv-photo--g8 { background: linear-gradient(135deg, var(--stv-pink-500) 0%, var(--stv-dark) 100%); }
+    .stv-photo__icon {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.18);
+    }
+    .stv-photo__icon .stv-icon { width: 20px; height: 20px; color: currentColor; }
+    .stv-photo__cap { font-weight: var(--weight-bold); font-size: var(--text-sm); line-height: var(--leading-snug); }
+    /* Лёгкая «фото»-сетка поверх для честного эффекта плейсхолдера */
+    .stv-photo::after {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 14px);
+      pointer-events: none;
+    }
+    .stv-photo > * { position: relative; z-index: 1; }
+
+    /* --- Плашка итогов события: крупные цифры --- */
+    .stv-stats {
+      display: grid;
+      gap: var(--space-4);
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .stv-stat {
+      background: var(--color-dark-surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+    }
+    .stv-stat__num {
+      font-size: var(--text-3xl);
+      font-weight: var(--weight-extrabold);
+      line-height: 1;
+      color: var(--stv-green);
+      display: inline-flex; align-items: center; gap: var(--space-2);
+    }
+    .stv-stat__num .stv-icon { width: 28px; height: 28px; }
+    .stv-stat__label { color: var(--color-on-dark-muted); font-size: var(--text-sm); margin-top: var(--space-2); }
+
+    /* --- Отзыв-цитата --- */
+    .stv-quote__text { font-size: var(--text-lg); line-height: var(--leading-snug); margin-bottom: var(--space-4); }
+    .stv-quote__author { display: flex; align-items: center; gap: var(--space-3); }
+    .stv-quote__name { font-weight: var(--weight-bold); font-size: var(--text-sm); }
+    .stv-quote__role { color: var(--color-text-muted); font-size: var(--text-xs); }
+
+    /* --- Архив мероприятий: компактный список --- */
+    .stv-archive { display: flex; flex-direction: column; }
+    .stv-archive__row {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding-block: var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .stv-archive__row:last-child { border-bottom: 0; }
+    .stv-archive__icon { color: var(--stv-purple-500); flex-shrink: 0; }
+    .stv-archive__name { font-weight: var(--weight-semibold); }
+    .stv-archive__date { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .stv-archive__link { margin-left: auto; font-size: var(--text-sm); font-weight: var(--weight-semibold); white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================================
+       ИНЛАЙН-СПРАЙТ ИКОНОК (часть эталонной оболочки — копируется всеми экранами).
+       <use href="assets/icons.svg#..."> блокируется при открытии по file://,
+       поэтому все <symbol> вставлены прямо в начало <body>. После этого иконки
+       работают через <svg class="stv-icon"><use href="#stv-coin"></use></svg>.
+       ============================================================================ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="stv-coin" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 12 L12 4 A8 8 0 0 1 20 12 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="stv-idea" viewBox="0 0 24 24">
+      <circle cx="12" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 6 L15 11 L9 11 Z" fill="currentColor"/>
+      <rect x="9" y="17" width="6" height="3" rx="1" fill="currentColor"/>
+    </symbol>
+    <symbol id="stv-store" viewBox="0 0 24 24">
+      <path d="M4 8 L8 3 L16 3 L20 8 Z" fill="currentColor"/>
+      <rect x="5" y="8" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="10" y="13" width="4" height="7" fill="currentColor"/>
+    </symbol>
+    <symbol id="stv-events" viewBox="0 0 24 24">
+      <rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M4 9 L20 9" stroke="currentColor" stroke-width="2"/>
+      <path d="M20 5 L20 9 L16 9 Z" fill="currentColor"/>
+      <circle cx="9" cy="14" r="1.4" fill="currentColor"/>
+      <circle cx="14" cy="14" r="1.4" fill="currentColor"/>
+    </symbol>
+    <symbol id="stv-profile" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M4 20 A8 8 0 0 1 20 20 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="stv-thanks" viewBox="0 0 24 24">
+      <path d="M12 8 A4 4 0 0 1 20 8" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M4 8 A4 4 0 0 1 12 8" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M4 8 L12 20 L20 8 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="stv-arrow" viewBox="0 0 24 24">
+      <rect x="4" y="10.5" width="11" height="3" fill="currentColor"/>
+      <path d="M13 6 L20 12 L13 18 Z" fill="currentColor"/>
+    </symbol>
+  </svg>
+
+  <!-- ============================================================================
+       НАВБАР (эталонная оболочка — копируется всеми экранами; меняется только
+       класс .is-active на соответствующем пункте). Активен: Vibe.
+       ============================================================================ -->
+  <header class="stv-navbar">
+    <div class="stv-navbar__inner">
+      <a class="stv-navbar__brand" href="index.html" aria-label="СТВ Life — на главную">
+        <img src="assets/logo/logo-mono-invert-transparent.png" alt="СТВ">
+      </a>
+      <nav class="stv-navbar__nav">
+        <a class="stv-navbar__link" href="index.html">СТВ Life</a>
+        <a class="stv-navbar__link" href="lab.html">Lab</a>
+        <a class="stv-navbar__link" href="store.html">Store</a>
+        <a class="stv-navbar__link is-active" href="vibe.html">Vibe</a>
+        <a class="stv-navbar__link" href="cabinet.html">Кабинет</a>
+      </nav>
+      <!-- Чип баланса кликабелен → ЛК (сквозное правило §2) -->
+      <a class="stv-balance" href="cabinet.html" aria-label="Баланс 620 Coins — в личный кабинет">
+        <svg class="stv-balance__icon stv-icon" aria-hidden="true"><use href="#stv-coin"></use></svg>
+        <span class="stv-balance__value" data-balance>620</span>
+        <span class="stv-balance__unit">Coins</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="stv-container">
+
+    <!-- ========================================================================
+         1. ШАПКА VIBE (§1.5 / §8) — заголовок + эмоциональный подзаголовок
+         ======================================================================== -->
+    <section class="stv-section">
+      <div class="stv-hero">
+        <div>
+          <p class="stv-eyebrow" style="color:var(--stv-green)">
+            <svg class="stv-icon" style="width:16px;height:16px;vertical-align:-3px" aria-hidden="true"><use href="#stv-events"></use></svg>
+            СТВ Vibe · мероприятия и фотоотчёты
+          </p>
+          <h1>Чем живёт компания</h1>
+          <p style="color:var(--color-on-dark-muted);margin:0">
+            Квизы, воркшопы, челленджи и итоги. Участвуй, набирай Coins и смотри, как команда проводит время вместе.
+          </p>
+        </div>
+        <div class="stv-hero__goal" style="align-self:stretch">
+          <div class="stv-row stv-row--between" style="margin-bottom:var(--space-2)">
+            <span style="font-weight:var(--weight-bold)">Ближайшее</span>
+            <span class="stv-status stv-status--new" style="background:rgba(77,229,100,0.20);color:var(--stv-green)">Неделя благодарности</span>
+          </div>
+          <p style="color:var(--color-on-dark-muted);margin:0 0 var(--space-3);font-size:var(--text-sm)">
+            23–27.06.2026 · P2P-челлендж · +30 Coins за участие
+          </p>
+          <a class="stv-btn stv-btn--primary stv-btn--sm" href="#anonsy">К анонсам →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         2. АНОНСЫ ПРЕДСТОЯЩИХ МЕРОПРИЯТИЙ (§1.5 + §3.7)
+         5 событий: дата, название, формат, организатор, +Coins, «Записаться».
+         Кнопка статична (data-action для интерактива фазы 4).
+         ======================================================================== -->
+    <section class="stv-section" id="anonsy">
+      <div class="stv-section-head">
+        <h2>Анонсы мероприятий</h2>
+        <a class="stv-section-head__link" href="#arhiv">Архив →</a>
+      </div>
+      <div class="stv-grid">
+
+        <article class="stv-card stv-card--hover">
+          <div class="stv-row" style="margin-bottom:var(--space-3)">
+            <span class="stv-datechip"><span class="stv-datechip__day">23</span><span class="stv-datechip__mon">июн</span></span>
+            <span class="stv-price"><svg class="stv-icon stv-price__coin" aria-hidden="true"><use href="#stv-coin"></use></svg>+30</span>
+          </div>
+          <span class="stv-status stv-status--new" style="margin-bottom:var(--space-2)">P2P-челлендж</span>
+          <div class="stv-card__title">Неделя благодарности</div>
+          <p class="stv-meta" style="margin-bottom:var(--space-4)">23–27.06.2026 · Организатор: HR СТВ</p>
+          <a class="stv-btn stv-btn--primary stv-btn--sm stv-btn--block" href="#registraciya" id="signup-week-thanks" data-action="signup" data-event="nedelya-blagodarnosti">Записаться</a>
+        </article>
+
+        <article class="stv-card stv-card--hover">
+          <div class="stv-row" style="margin-bottom:var(--space-3)">
+            <span class="stv-datechip"><span class="stv-datechip__day">25</span><span class="stv-datechip__mon">июн</span></span>
+            <span class="stv-price"><svg class="stv-icon stv-price__coin" aria-hidden="true"><use href="#stv-coin"></use></svg>+20</span>
+          </div>
+          <span class="stv-status stv-status--vote" style="margin-bottom:var(--space-2)">Онлайн-голосование</span>
+          <div class="stv-card__title">Голосование за следующий дроп</div>
+          <p class="stv-meta" style="margin-bottom:var(--space-4)">25.06.2026 · Организатор: команда Store</p>
+          <a class="stv-btn stv-btn--primary stv-btn--sm stv-btn--block" href="#registraciya" id="signup-drop-vote" data-action="signup" data-event="golosovanie-drop">Записаться</a>
+        </article>
+
+        <article class="stv-card stv-card--hover">
+          <div class="stv-row" style="margin-bottom:var(--space-3)">
+            <span class="stv-datechip"><span class="stv-datechip__day">01</span><span class="stv-datechip__mon">июл</span></span>
+            <span class="stv-price"><svg class="stv-icon stv-price__coin" aria-hidden="true"><use href="#stv-coin"></use></svg>до +200</span>
+          </div>
+          <span class="stv-status stv-status--progress" style="margin-bottom:var(--space-2)">Челлендж Lab</span>
+          <div class="stv-card__title">Месяц инициатив СТВ</div>
+          <p class="stv-meta" style="margin-bottom:var(--space-4)">весь июль 2026 · Организатор: модераторы Lab</p>
+          <a class="stv-btn stv-btn--primary stv-btn--sm stv-btn--block" href="#registraciya" id="signup-month-init" data-action="signup" data-event="mesyac-iniciativ">Записаться</a>
+        </article>
+
+        <article class="stv-card stv-card--hover">
+          <div class="stv-row" style="margin-bottom:var(--space-3)">
+            <span class="stv-datechip"><span class="stv-datechip__day">30</span><span class="stv-datechip__mon">июн</span></span>
+            <span class="stv-price"><svg class="stv-icon stv-price__coin" aria-hidden="true"><use href="#stv-coin"></use></svg>+30</span>
+          </div>
+          <span class="stv-status stv-status--instock" style="margin-bottom:var(--space-2)">Офлайн · студия</span>
+          <div class="stv-card__title">Квиз «Кто делает эфир»</div>
+          <p class="stv-meta" style="margin-bottom:var(--space-4)">30.06.2026 · Организатор: продюсерский отдел</p>
+          <a class="stv-btn stv-btn--primary stv-btn--sm stv-btn--block" href="#registraciya" id="signup-quiz-air" data-action="signup" data-event="kviz-kto-delaet-efir">Записаться</a>
+        </article>
+
+        <article class="stv-card stv-card--hover">
+          <div class="stv-row" style="margin-bottom:var(--space-3)">
+            <span class="stv-datechip"><span class="stv-datechip__day">02</span><span class="stv-datechip__mon">июл</span></span>
+            <span class="stv-price"><svg class="stv-icon stv-price__coin" aria-hidden="true"><use href="#stv-coin"></use></svg>+40</span>
+          </div>
+          <span class="stv-status stv-status--instock" style="margin-bottom:var(--space-2)">Обучение</span>
+          <div class="stv-card__title">Воркшоп «Монтаж под эфир за 60 минут»</div>
+          <p class="stv-meta" style="margin-bottom:var(--space-4)">02.07.2026 · Организатор: отдел монтажа</p>
+          <a class="stv-btn stv-btn--primary stv-btn--sm stv-btn--block" href="#registraciya" id="signup-workshop-edit" data-action="signup" data-event="vorkshop-montazh">Записаться</a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         3. РЕГИСТРАЦИЯ / УЧАСТНИКИ (§1.5) — для ближайшего события
+         «Вы записаны?» + аватары-плейсхолдеры + счётчик «+12 идут».
+         ======================================================================== -->
+    <section class="stv-section" id="registraciya" style="padding-top:0">
+      <div class="stv-card">
+        <div class="stv-grid stv-grid--2" style="align-items:center">
+          <div>
+            <span class="stv-status stv-status--new" style="margin-bottom:var(--space-3)">Ближайшее · 23–27.06.2026</span>
+            <h3 style="margin:0 0 var(--space-2)">Неделя благодарности</h3>
+            <p class="stv-muted" style="margin:0 0 var(--space-4)">
+              P2P-челлендж: благодари коллег всю неделю. За участие — +30 Coins, лучшим — бейдж «Командный игрок».
+            </p>
+            <div class="stv-row">
+              <a class="stv-btn stv-btn--primary" href="#registraciya" id="signup-featured" data-action="signup" data-event="nedelya-blagodarnosti">Записаться</a>
+              <span class="stv-small stv-muted">Вы ещё не записаны — присоединяйтесь</span>
+            </div>
+          </div>
+          <div>
+            <p class="stv-small stv-muted" style="margin:0 0 var(--space-3)">Кто уже идёт</p>
+            <div class="stv-row stv-row--between" style="flex-wrap:nowrap">
+              <div class="stv-avatars">
+                <span class="stv-avatar stv-avatar--green">МЛ</span>
+                <span class="stv-avatar stv-avatar--blue">АК</span>
+                <span class="stv-avatar stv-avatar--pink">СО</span>
+                <span class="stv-avatar stv-avatar--purple">ДК</span>
+                <span class="stv-avatar stv-avatar--more">+8</span>
+              </div>
+              <span class="stv-price" style="color:var(--stv-green-700)">
+                <svg class="stv-icon" style="width:18px;height:18px;color:var(--stv-green-700)" aria-hidden="true"><use href="#stv-profile"></use></svg>
+                <span id="signup-counter" data-base="12" data-event="nedelya-blagodarnosti">+12 идут</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         4. ФОТОАЛЬБОМ ПРОШЕДШЕГО СОБЫТИЯ (§1.5 / §8)
+         Заголовок события + сетка брендовых плейсхолдер-плиток (8 шт).
+         ВАЖНО: реальных фото мероприятий нет — плитки это честные брендовые
+         плейсхолдеры (градиенты из палитры через токены), НЕ фото мерча.
+         ======================================================================== -->
+    <section class="stv-section">
+      <div class="stv-section-head">
+        <h2>Фотоальбом · Запуск СТВ Life</h2>
+        <span class="stv-small stv-muted">15.05.2026 · лучшие моменты</span>
+      </div>
+      <div class="stv-album">
+        <figure class="stv-photo stv-photo--g1" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-events"></use></svg></span>
+          <figcaption class="stv-photo__cap">Открытие · сцена</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g2" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-idea"></use></svg></span>
+          <figcaption class="stv-photo__cap">Квиз «История бренда»</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g3" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-thanks"></use></svg></span>
+          <figcaption class="stv-photo__cap">Награждение месяца</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g4" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-coin"></use></svg></span>
+          <figcaption class="stv-photo__cap">Первый дроп New STV Era</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g5" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-events"></use></svg></span>
+          <figcaption class="stv-photo__cap">Командное фото</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g6" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-store"></use></svg></span>
+          <figcaption class="stv-photo__cap">Стенд мерча</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g7" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-idea"></use></svg></span>
+          <figcaption class="stv-photo__cap">Питч инициатив</figcaption>
+        </figure>
+        <figure class="stv-photo stv-photo--g8" style="margin:0">
+          <span class="stv-photo__icon"><svg class="stv-icon" aria-hidden="true"><use href="#stv-thanks"></use></svg></span>
+          <figcaption class="stv-photo__cap">Афтепати команды</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         5. ИТОГИ СОБЫТИЯ (§8) — плашка с цифрами на тёмном фоне бренда
+         Сколько участвовало, сколько Coins начислено, сколько идей появилось.
+         ======================================================================== -->
+    <section class="stv-section" style="padding-top:0">
+      <div class="stv-hero" style="display:block">
+        <div class="stv-section-head" style="margin-bottom:var(--space-5)">
+          <h3 style="margin:0;color:var(--color-on-dark)">Итоги · Запуск СТВ Life</h3>
+          <span class="stv-small" style="color:var(--color-on-dark-muted)">15.05.2026</span>
+        </div>
+        <div class="stv-stats">
+          <div class="stv-stat">
+            <div class="stv-stat__num">
+              <svg class="stv-icon" style="width:28px;height:28px;color:var(--stv-green)" aria-hidden="true"><use href="#stv-profile"></use></svg>
+              142
+            </div>
+            <div class="stv-stat__label">сотрудника участвовали</div>
+          </div>
+          <div class="stv-stat">
+            <div class="stv-stat__num">
+              <svg class="stv-icon" aria-hidden="true"><use href="#stv-coin"></use></svg>
+              +3 840
+            </div>
+            <div class="stv-stat__label">Coins начислено за активность</div>
+          </div>
+          <div class="stv-stat">
+            <div class="stv-stat__num">
+              <svg class="stv-icon" style="width:28px;height:28px;color:var(--stv-green)" aria-hidden="true"><use href="#stv-idea"></use></svg>
+              12
+            </div>
+            <div class="stv-stat__label">идей за вечер</div>
+          </div>
+          <div class="stv-stat">
+            <div class="stv-stat__num">
+              <svg class="stv-icon" style="width:28px;height:28px;color:var(--stv-green)" aria-hidden="true"><use href="#stv-thanks"></use></svg>
+              96
+            </div>
+            <div class="stv-stat__label">благодарностей за вечер</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         6. ОТЗЫВЫ УЧАСТНИКОВ (§8) — 3 цитаты-карточки
+         ======================================================================== -->
+    <section class="stv-section" style="padding-top:0">
+      <div class="stv-section-head"><h2>Отзывы участников</h2></div>
+      <div class="stv-grid">
+
+        <article class="stv-card">
+          <span class="stv-thank__icon" style="margin-bottom:var(--space-3)"><svg class="stv-icon" aria-hidden="true"><use href="#stv-thanks"></use></svg></span>
+          <p class="stv-quote__text">«Впервые увидел, сколько всего делает команда монтажа. Квиз — огонь, и Coins за участие приятный бонус.»</p>
+          <div class="stv-quote__author">
+            <span class="stv-avatar stv-avatar--green" style="margin:0">ИС</span>
+            <span>
+              <div class="stv-quote__name">Игорь Соколов</div>
+              <div class="stv-quote__role">Видеомонтажёр</div>
+            </span>
+          </div>
+        </article>
+
+        <article class="stv-card">
+          <span class="stv-thank__icon" style="margin-bottom:var(--space-3)"><svg class="stv-icon" aria-hidden="true"><use href="#stv-thanks"></use></svg></span>
+          <p class="stv-quote__text">«Наконец-то корпоратив, после которого хочется работать. Дроп New STV Era разобрали моментально.»</p>
+          <div class="stv-quote__author">
+            <span class="stv-avatar stv-avatar--blue" style="margin:0">МЛ</span>
+            <span>
+              <div class="stv-quote__name">Марина Лебедева</div>
+              <div class="stv-quote__role">Продюсер</div>
+            </span>
+          </div>
+        </article>
+
+        <article class="stv-card">
+          <span class="stv-thank__icon" style="margin-bottom:var(--space-3)"><svg class="stv-icon" aria-hidden="true"><use href="#stv-thanks"></use></svg></span>
+          <p class="stv-quote__text">«Питч инициатив зарядил — на следующий день подал две идеи в Lab. Это работает.»</p>
+          <div class="stv-quote__author">
+            <span class="stv-avatar stv-avatar--pink" style="margin:0">АК</span>
+            <span>
+              <div class="stv-quote__name">Артём Ковалёв</div>
+              <div class="stv-quote__role">Звукорежиссёр</div>
+            </span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         7. АРХИВ МЕРОПРИЯТИЙ (§8) — компактный список прошедших
+         ======================================================================== -->
+    <section class="stv-section" id="arhiv" style="padding-top:0">
+      <div class="stv-section-head"><h2>Архив мероприятий</h2></div>
+      <div class="stv-card">
+        <div class="stv-archive">
+          <div class="stv-archive__row">
+            <svg class="stv-icon stv-archive__icon" aria-hidden="true"><use href="#stv-events"></use></svg>
+            <span>
+              <div class="stv-archive__name">Запуск СТВ Life</div>
+              <div class="stv-archive__date">15.05.2026 · 142 участника</div>
+            </span>
+            <a class="stv-archive__link" href="#" data-action="open-archive" data-event="zapusk-stv-life">Смотреть →</a>
+          </div>
+          <div class="stv-archive__row">
+            <svg class="stv-icon stv-archive__icon" aria-hidden="true"><use href="#stv-idea"></use></svg>
+            <span>
+              <div class="stv-archive__name">Квиз «История бренда СТВ»</div>
+              <div class="stv-archive__date">28.05.2026 · 64 участника</div>
+            </span>
+            <a class="stv-archive__link" href="#" data-action="open-archive" data-event="kviz-istoriya-brenda">Смотреть →</a>
+          </div>
+          <div class="stv-archive__row">
+            <svg class="stv-icon stv-archive__icon" aria-hidden="true"><use href="#stv-events"></use></svg>
+            <span>
+              <div class="stv-archive__name">Месяц идей СТВ</div>
+              <div class="stv-archive__date">апрель 2026 · 38 инициатив</div>
+            </span>
+            <a class="stv-archive__link" href="#" data-action="open-archive" data-event="mesyac-idey">Смотреть →</a>
+          </div>
+          <div class="stv-archive__row">
+            <svg class="stv-icon stv-archive__icon" aria-hidden="true"><use href="#stv-thanks"></use></svg>
+            <span>
+              <div class="stv-archive__name">Воркшоп «Монтаж под эфир»</div>
+              <div class="stv-archive__date">12.04.2026 · 31 участник</div>
+            </span>
+            <a class="stv-archive__link" href="#" data-action="open-archive" data-event="vorkshop-aprel">Смотреть →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================================
+       ФУТЕР (эталонная оболочка — копируется всеми экранами).
+       ============================================================================ -->
+  <footer class="stv-footer">
+    <div class="stv-footer__inner">
+      <img src="assets/logo/logo-mono-invert-transparent.png" alt="СТВ">
+      <span>СТВ Life — внутренняя платформа вовлечения · демо-прототип</span>
+      <a href="#" id="stv-reset-demo" style="margin-left:auto;color:var(--color-on-dark-muted);text-decoration:underline">Сбросить демо</a>
+    </div>
+  </footer>
+
+  <!-- Интерактив демо-сценария (Фаза 4). defer — DOM готов к моменту запуска. -->
+  <script src="scripts/app.js" defer></script>
+
+</body>
+</html>

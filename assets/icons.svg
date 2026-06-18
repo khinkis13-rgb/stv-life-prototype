@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  STV Life — набор иконок (sprite из <symbol>).
+  Стиль брендбука СТВ: геометрия из элементарных фигур (квадрат / треугольник /
+  круг / сектор), рублёные формы, основной цвет — зелёный #4DE564 (через currentColor).
+  В брендбуке нельзя использовать сам знак «STV» как текстуру — здесь его и нет,
+  только родственная геометрия.
+
+  Использование на странице:
+    1) встроить содержимое спрайта в начало <body> (display:none), либо
+    2) <svg class="stv-icon"><use href="assets/icons.svg#stv-coin"></use></svg>
+  viewBox у всех 24×24. Цвет задаётся через color родителя (stroke/fill = currentColor).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+
+  <!-- COIN / Coins: круг (монета) + вписанный сектор-четвертинка как намёк на «накопление» -->
+  <symbol id="stv-coin" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M12 12 L12 4 A8 8 0 0 1 20 12 Z" fill="currentColor"/>
+  </symbol>
+
+  <!-- IDEA / лампочка: круг (колба) + треугольник (луч/искра) + прямоугольник (цоколь) -->
+  <symbol id="stv-idea" viewBox="0 0 24 24">
+    <circle cx="12" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M12 6 L15 11 L9 11 Z" fill="currentColor"/>
+    <rect x="9" y="17" width="6" height="3" rx="1" fill="currentColor"/>
+  </symbol>
+
+  <!-- STORE / магазин: прямоугольник (прилавок) + треугольный навес (маркиза) -->
+  <symbol id="stv-store" viewBox="0 0 24 24">
+    <path d="M4 8 L8 3 L16 3 L20 8 Z" fill="currentColor"/>
+    <rect x="5" y="8" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+    <rect x="10" y="13" width="4" height="7" fill="currentColor"/>
+  </symbol>
+
+  <!-- EVENTS / календарь: квадрат + сектор-уголок + точки-дни -->
+  <symbol id="stv-events" viewBox="0 0 24 24">
+    <rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M4 9 L20 9" stroke="currentColor" stroke-width="2"/>
+    <path d="M20 5 L20 9 L16 9 Z" fill="currentColor"/>
+    <circle cx="9" cy="14" r="1.4" fill="currentColor"/>
+    <circle cx="14" cy="14" r="1.4" fill="currentColor"/>
+  </symbol>
+
+  <!-- PROFILE / профиль: круг (голова) + сектор-полукруг (плечи) -->
+  <symbol id="stv-profile" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M4 20 A8 8 0 0 1 20 20 Z" fill="currentColor"/>
+  </symbol>
+
+  <!-- THANKS / сердце-благодарность: два сектора + треугольник (геометричное сердце) -->
+  <symbol id="stv-thanks" viewBox="0 0 24 24">
+    <path d="M12 8 A4 4 0 0 1 20 8" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M4 8 A4 4 0 0 1 12 8" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M4 8 L12 20 L20 8 Z" fill="currentColor"/>
+  </symbol>
+
+  <!-- ARROW / стрелка: треугольник (наконечник) + прямоугольник (древко) -->
+  <symbol id="stv-arrow" viewBox="0 0 24 24">
+    <rect x="4" y="10.5" width="11" height="3" fill="currentColor"/>
+    <path d="M13 6 L20 12 L13 18 Z" fill="currentColor"/>
+  </symbol>
+
+</svg>
