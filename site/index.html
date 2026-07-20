@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>СТВ · Пульс эфира — концепт-прототип</title>
+  <meta name="description" content="Концепт-прототип корпоративного сайта СТВ: живой пульс эфира и интерактивный путь сигнала. Данные демонстрационные.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap&subset=cyrillic,cyrillic-ext,latin,latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#pulse" aria-label="СТВ — на начало страницы">
+        <img src="assets/logo-color.png" alt="СТВ">
+      </a>
+      <span class="badge-proto">прототип · данные условные</span>
+      <nav class="site-nav" aria-label="Разделы">
+        <a href="#pulse">Пульс эфира</a>
+        <a href="#signal">Путь сигнала</a>
+      </nav>
+      <div class="clock" id="clock" aria-hidden="true">--:--:--</div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ==================== ПУЛЬС ЭФИРА ==================== -->
+    <section id="pulse" class="pulse">
+      <div class="container">
+        <p class="kicker"><span class="live-dot" aria-hidden="true"></span> прямо сейчас</p>
+        <h1>Пульс эфира</h1>
+        <p class="lead">СТВ готовит и выдаёт эфир десятков телеканалов - 24/7, без пауз и права на ошибку. Так может выглядеть главная страница сайта: не рассказ о компании, а её работа в прямом эфире.</p>
+
+        <div class="metrics">
+          <div class="metric metric--live">
+            <div class="metric__value" id="mChannels">48</div>
+            <div class="metric__label">каналов в эфире сейчас</div>
+          </div>
+          <div class="metric">
+            <div class="metric__value">99,98<span class="metric__unit">%</span></div>
+            <div class="metric__label">аптайм за 12 месяцев</div>
+          </div>
+          <div class="metric">
+            <div class="metric__value" id="mHours">231 552</div>
+            <div class="metric__label">часов эфира с начала года</div>
+          </div>
+          <div class="metric">
+            <div class="metric__value" id="mFiles">96</div>
+            <div class="metric__label">материалов принято за сутки</div>
+          </div>
+        </div>
+
+        <div class="pulse-grid">
+          <div class="channels">
+            <div class="block-head">
+              <h2>Каналы на комплексе</h2>
+              <div class="legend" aria-hidden="true">
+                <span><i style="background: var(--stv-green)"></i> в эфире</span>
+                <span><i style="background: var(--stv-ochre-500)"></i> подготовка выпуска</span>
+                <span><i style="background: var(--stv-blue)"></i> плановые работы</span>
+              </div>
+            </div>
+            <div class="wall">
+              <div class="wall__grid" id="channelsGrid"></div>
+              <div class="wall__caption" aria-hidden="true">мультивьюер аппаратной · изображение условное</div>
+            </div>
+          </div>
+
+          <div class="feed">
+            <div class="block-head">
+              <h2>Журнал эфира</h2>
+              <span class="feed__hint"><span class="live-dot live-dot--sm" aria-hidden="true"></span> события появляются сами</span>
+            </div>
+            <ul id="feed" class="feed__list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ПУТЬ СИГНАЛА ==================== -->
+    <section id="signal" class="signal">
+      <div class="container">
+        <p class="kicker">интерактив</p>
+        <h2 class="h1">Путь сигнала</h2>
+        <p class="lead">От студии телеканала до кнопки на пульте. Одна схема объясняет, чем занимается СТВ, и заказчику, и кандидату, и родителям сотрудника.</p>
+
+        <p class="path-hint"><span class="path-hint__icon" aria-hidden="true">👆</span> Кликните по любому этапу - ниже откроется, как СТВ проходит этот шаг</p>
+
+        <div class="path">
+          <div class="path__track" id="pathTrack"></div>
+        </div>
+
+        <div class="stage-detail" id="stageDetail" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ==================== МОСТИК К ПИСЬМУ ==================== -->
+    <section class="next">
+      <div class="container">
+        <div class="next__inner">
+          <h2>Это две механики из письма в рабочую группу</h2>
+          <p>«Пульс эфира» - живое доказательство надёжности вместо слов о ней: такого блока нет ни у одного игрока отрасли, ни у нас, ни за рубежом. «Путь сигнала» - одна интерактивная схема вместо страницы текста об услугах. А ⚡-метки на этапах - реальные инициативы из «Мастера идей»: заготовка третьей механики, витрины «ИИ-лаборатория СТВ».</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Концепт-прототип для рабочей группы по сайту · все данные на странице демонстрационные, каналы обезличены · СТВ · июль 2026</p>
+    </div>
+  </footer>
+
+  <script src="scripts/wall.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>
